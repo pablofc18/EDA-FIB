@@ -1,0 +1,46 @@
+
+      vector<int> alive = alive_units(me()); // mis unidades vivas
+
+      if (round() > num_rounds()/2) {
+
+        for (auto id : alive) {
+
+          // por cada unidad is id par... si tiene al rededor una unidad enemiga...
+          for (auto direc : dirs) {
+            Pos new_pos = unit(id).pos + direc;
+            // if new pos = zombie/another player or food go for it
+            if (pos_ok(new_pos) and cell(new_pos).type != Waste) {
+              if (cell(new_pos).food) move(id,direc); // food go for it
+              else if (cell(new_pos).owner != me() and cell(new_pos).owner != -1) {
+                if (strength(cell(new_pos).owner) < strength(me())) move(id,direc);
+              }
+            }
+          }
+
+
+          // If no enemy around/food move random
+          Dir rand_dir = dirs[random(0,int(dirs.size()-1))];
+          Pos new_pos = unit(id).pos + rand_dir;
+          if (pos_ok(new_pos) and cell(new_pos).type != Waste) move(id,rand_dir);
+        }
+      }
+
+      // ronda 0...100
+      else {
+
+        for (auto id : alive) {
+
+          // if near food go for it
+          for (auto direc : dirs) {
+            Pos new_pos = unit(id).pos + direc;
+            // if food go for it
+            if (cell(new_pos).food) move(id,direc);
+            // else move rand
+          }
+
+          // no food around move rand
+          Dir rand_dir = dirs[random(0,int(dirs.size()-1))];
+          Pos new_pos = unit(id).pos + rand_dir;
+          if (pos_ok(new_pos) and cell(new_pos).type != Waste) move(id,rand_dir);
+        }
+      }
